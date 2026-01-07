@@ -1,0 +1,22 @@
+body {
+  text-align: center;
+  font-family: sans-serif;
+}
+
+button {
+  font-size: 18px;
+  margin: 5px;
+  padding: 8px 16px;
+}
+
+#player-hands,
+#cpu-hands {
+  max-width: 700px;
+  margin: 10px auto;
+  font-size: 22px;
+  line-height: 1.6;
+}
+
+#count {
+  font-weight: bold;
+}
