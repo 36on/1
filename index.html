@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>百手観音じゃんけん</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>百手観音じゃんけん</h1>
+
+  <p>グー・チョキ・パーを100回選んでね</p>
+
+  <div id="buttons">
+    <button onclick="addHand('グー')">✊ グー</button>
+    <button onclick="addHand('チョキ')">✌ チョキ</button>
+    <button onclick="addHand('パー')">✋ パー</button>
+  </div>
+
+  <p id="count">選んだ数：0 / 100</p>
+
+  <button onclick="play()">戦わせる！</button>
+
+  <h2>自分の100手</h2>
+  <div id="player-hands"></div>
+
+  <h2>CPUの100手</h2>
+  <div id="cpu-hands"></div>
+
+  <h2 id="result"></h2>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
