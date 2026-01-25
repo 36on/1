@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>説明付きブロック並び替え</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; }
+    #toolbar {
+      background: #222; color: white; padding: 8px;
+      display: flex; gap: 8px; align-items: center;
+    }
+    #area {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 24px;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    .block {
+      background: white;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      width: 160px;
+      cursor: grab;
+      user-select: none;
+    }
+    .title {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .desc {
+      font-size: 13px;
+      color: #444;
+      border-top: 1px solid #ddd;
+      padding-top: 6px;
+    }
+    .desc[contenteditable="true"] {
+      outline: 1px dashed #999;
+    }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <button id="add">＋ ブロック追加</button>
+    <span>説明はクリックして編集</span>
+  </div>
+
+  <div id="area"></div>
+
+  <script>
+    const area = document.getElementById("area");
+    const addBtn = document.getElementById("add");
+    let dragged = null;
+
+    function addBlock(title = "ブロック", desc = "ここに説明を書けます") {
+      const block = document.createElement("div");
+      block.className = "block";
+      block.draggable = true;
+
+      const titleDiv = document.createElement("div");
+      titleDiv.className = "title";
+      titleDiv.textContent = title;
+
+      const descDiv = document.createElement("div");
+      descDiv.className = "desc";
+      descDiv.textContent = desc;
+      descDiv.contentEditable = true;
+
+      block.appendChild(titleDiv);
+      block.appendChild(descDiv);
+
+      block.addEventListener("dragstart", () => {
+        dragged = block;
+      });
+
+      block.addEventListener("dragover", e => e.preventDefault());
+
+      block.addEventListener("drop", () => {
+        if (dragged && dragged !== block) {
+          const nodes = Array.from(area.children);
+          const draggedIndex = nodes.indexOf(dragged);
+          const targetIndex = nodes.indexOf(block);
+          if (draggedIndex < targetIndex) {
+            area.insertBefore(dragged, block.nextSibling);
+          } else {
+            area.insertBefore(dragged, block);
+          }
+        }
+      });
+
+      area.appendChild(block);
+    }
+
+    addBtn.addEventListener("click", () => addBlock());
+
+    addBlock("スタート", "処理を開始する");
+    addBlock("処理", "何かの計算を行う");
+    addBlock("ゴール", "処理が終了する");
+  </script>
+</body>
+</html>
