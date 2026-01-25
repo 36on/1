@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>語順メモ</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; }
+    #toolbar {
+      background: #222; color: white; padding: 8px;
+      display: flex; gap: 8px; align-items: center;
+    }
+    #area {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 24px;
+      background: #f5f5f5;
+      min-height: 100vh;
+    }
+    .block {
+      background: white;
+      border: 2px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      width: 160px;
+      cursor: grab;
+      user-select: none;
+    }
+    .title {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .desc {
+      font-size: 13px;
+      color: #444;
+      border-top: 1px solid #ddd;
+      padding-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="toolbar">
+    <button id="add">＋ 追加</button>
+    <button id="save">保存</button>
+    <button id="load">読み込み</button>
+  </div>
+
+  <div id="area"></div>
+
+  <script>
+    const area = document.getElementById("area");
+    const addBtn = document.getElementById("add");
+    const saveBtn = document.getElementById("save");
+    const loadBtn = document.getElementById("load");
+
+    let dragged = null;
+
+    function addBlock(title = "名前", desc = "説明") {
+      const block = document.createElement("div");
+      block.className = "block";
+      block.draggable = true;
+
+      const titleDiv = document.createElement("div");
+      titleDiv.className = "title";
+      titleDiv.textContent = title;
+      titleDiv.contentEditable = true;
+
+      const descDiv = document.createElement("div");
+      descDiv.className = "desc";
+      descDiv.textContent = desc;
+      descDiv.contentEditable = true;
+
+      block.appendChild(titleDiv);
+      block.appendChild(descDiv);
+
+      block.addEventListener("dragstart", () => dragged = block);
+      block.addEventListener("dragover", e => e.preventDefault());
+      block.addEventListener("drop", () => {
+        if (!dragged || dragged === block) return;
+        const nodes = Array.from(area.children);
+        const draggedIndex = nodes.indexOf(dragged);
+        const targetIndex = nodes.indexOf(block);
+        if (draggedIndex < targetIndex) {
+          area.insertBefore(dragged, block.nextSibling);
+        } else {
+          area.insertBefore(dragged, block);
+        }
+      });
+
+      area.appendChild(block);
+    }
+
+    saveBtn.addEventListener("click", () => {
+      const data = Array.from(area.children).map(block => ({
+        title: block.querySelector('.title').textContent,
+        desc: block.querySelector('.desc').textContent
+      }));
+      localStorage.setItem('blocks', JSON.stringify(data));
+      alert('保存しました');
+    });
+
+    loadBtn.addEventListener("click", () => {
+      const raw = localStorage.getItem('blocks');
+      if (!raw) return alert('データがありません');
+      area.innerHTML = '';
+      JSON.parse(raw).forEach(b => addBlock(b.title, b.desc));
+    });
+
+    addBtn.addEventListener("click", () => addBlock());
+
+    // 初期表示
+    if (localStorage.getItem('blocks')) {
+      loadBtn.click();
+    } else {
+      addBlock("名詞", "説明");
+      addBlock("処理", "説明");
+      addBlock("ゴール", "説明");
+    }
+  </script>
+</body>
+</html>
